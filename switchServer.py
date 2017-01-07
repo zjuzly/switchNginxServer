@@ -10,7 +10,7 @@ f = open('./nginx.conf', 'r')
 lines = f.readlines()
 length = len(lines)
 
-pattern = r'^(\s)*#?server_name (test.)?note.youdao.com'
+pattern = r'^(\s)*#?(\s)*server_name (test.)?note.youdao.com'
 reg = re.compile(pattern)
 
 index = 0
@@ -18,7 +18,6 @@ while index < length:
     if not lines[index].strip():
         index = index + 1
         continue
-    # print(lines[index])
     if reg.match(lines[index]):
         status = 'normal'
         if startswith(lines[index], '#'):
@@ -30,7 +29,9 @@ while index < length:
             # print(lines[index])
             if status == 'comment':
                 strp = lines[index].lstrip()
+                # print(len(lines[index]) - len(strp))
                 lines[index] = strp[1:].ljust(len(lines[index]))
+                # print(lines[index])
             else:
                 lines[index] = '#' + lines[index]
             if '}' in lines[index]:
