@@ -1,5 +1,6 @@
 import os
 import subprocess
+import re
 
 def startswith(sstr, ch):
     return sstr.lstrip().startswith(ch)
@@ -9,13 +10,16 @@ f = open('./nginx.conf', 'r')
 lines = f.readlines()
 length = len(lines)
 
+pattern = r'^(\s)*#?server_name (test.)?note.youdao.com'
+reg = re.compile(pattern)
+
 index = 0
 while index < length:
     if not lines[index].strip():
         index = index + 1
         continue
-    print(lines[index])
-    if ('server_name test.note.youdao.com' in lines[index]) or ('server_name note.youdao.com' in lines[index]):
+    # print(lines[index])
+    if reg.match(lines[index]):
         status = 'normal'
         if startswith(lines[index], '#'):
             status = 'comment'
