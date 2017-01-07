@@ -1,12 +1,14 @@
 import os
 import subprocess
 import re
+import sys
 
 def startswith(sstr, ch):
     return sstr.lstrip().startswith(ch)
 
-
-f = open('./nginx.conf', 'r')
+filename = sys.argv[1] or './nginx.conf'
+print(filename)
+f = open(filename, 'r')
 lines = f.readlines()
 length = len(lines)
 
@@ -26,12 +28,9 @@ while index < length:
             if not lines[index].strip():
                 index = index + 1
                 continue
-            # print(lines[index])
             if status == 'comment':
                 strp = lines[index].lstrip()
-                # print(len(lines[index]) - len(strp))
-                lines[index] = strp[1:].ljust(len(lines[index]))
-                # print(lines[index])
+                lines[index] = strp[1:].ljust(len(lines[index]) - 1)
             else:
                 lines[index] = '#' + lines[index]
             if '}' in lines[index]:
@@ -41,19 +40,20 @@ while index < length:
 
 f.close()
 
-f = open('./nginx.conf', 'w')
+f = open(filename, 'w')
 f.writelines(lines)
+f.close()
 
 res = subprocess.Popen('tasklist /FI "ImageName eq nginx.exe"', stdout=subprocess.PIPE)
 lines = res.stdout.readlines()
 lines = filter(lambda arg: arg.decode('utf-8', errors='ignore').startswith('nginx'), lines)
 lines = list(lines)
 count = len(lines) # 获取nginx进程个数
+print(count)
+
 if count < 2:
     print('start nginx....')
-    subprocess.Popen('start nginx')
+    os.system('start nginx')
 else:
     print('reload nginx...')
     os.system('nginx -s reload')
-
-print(count)
