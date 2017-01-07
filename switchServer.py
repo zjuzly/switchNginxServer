@@ -49,5 +49,11 @@ lines = res.stdout.readlines()
 lines = filter(lambda arg: arg.decode('utf-8', errors='ignore').startswith('nginx'), lines)
 lines = list(lines)
 count = len(lines) # 获取nginx进程个数
+if count < 2:
+    print('start nginx....')
+    subprocess.Popen('start nginx')
+else:
+    print('reload nginx...')
+    os.system('nginx -s reload')
 
 print(count)
